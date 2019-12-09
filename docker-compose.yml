@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+
+  backend-db:
+    image: mysql:8
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    # environment variables to use
+    environment:
+      MYSQL_DATABASE: 'YO'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    # ports to map, YOU CANNOT RUN ANYTHING ELSE ON PORT 3306
+    ports:
+      - 3306:3306
+    # persistant volume
+    volumes:
+      - db_vol:/var/lib/mysql
+    # shared network
+    networks:
+      - backend
+
+networks:
+    backend:
+    
+volumes:
+    db_vol:
