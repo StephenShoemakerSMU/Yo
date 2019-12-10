@@ -22,8 +22,23 @@ services:
     networks:
       - backend
 
+  backend-api:
+    image: node:12
+    restart: always
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run dev"
+    volumes:
+      - ./BackendNetwork/JS:/usr/src/app
+    depends_on:
+      - backend-db
+    ports:
+      - 8000:8000
+    networks:
+      - backend
+      - frontend
 networks:
     backend:
+    frontend:
     
 volumes:
     db_vol:
