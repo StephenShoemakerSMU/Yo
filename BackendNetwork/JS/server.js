@@ -1,8 +1,11 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const accountRoutes = require('./accountRoutes.js');
+
 const { log, ExpressAPILogMiddleware } = require('@rama41222/node-logger');
+
 var account = require('./accountRoutes.js');
+const yoRoutes = require('./yoRoutes.js');
+
 const session = require('express-session');
 
 const express = require('express');
@@ -38,7 +41,7 @@ app.get('/', function(req,res){
 });
 
 account.init(app);
-
+yoRoutes.init(app);
 
 
  

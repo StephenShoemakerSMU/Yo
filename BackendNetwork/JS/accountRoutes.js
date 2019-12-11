@@ -8,6 +8,15 @@ getId = function(username){
     });
 }
 
+exports.addId = function(req,res,next){
+    mysql.query(`SELECT id FROM users WHERE username = '${req.session.username}';`, function(err,rows,fields){
+        req.session.userId = rows[0].id;
+        req.session.save();
+        
+        return next();
+    });
+}
+
 getUsername = function(req,res){
     mysql.query(`SELECT username FROM users WHERE id = '${req.params.id}';`, function(err,rows,fields){
         if(err){
@@ -25,7 +34,6 @@ generateSalt = function(){
 
 setPassword = function(user, password, res){
     salt = generateSalt();
-    console.log(user);
     hash =  crypto.pbkdf2Sync(password, salt,  
                     1000, 64, `sha512`).toString(`hex`);
     
@@ -38,16 +46,14 @@ setPassword = function(user, password, res){
 
 attemptLogin = function(username,password,req, res){
     mysql.query(`SELECT count(*) as length, salt FROM users WHERE username = '${username}';`, function(err,rows,fields){
-        console.log(rows);
         if(rows[0].length != 0){
-            console.log(rows[0].salt);
             hash = crypto.pbkdf2Sync(password, rows[0].salt,  
                 1000, 64, `sha512`).toString(`hex`);
-            console.log(hash);
             mysql.query(`SELECT count(*) as length FROM users WHERE username = '${username}' AND hash = '${hash}';`, function(err,row2,fields){
                 if(row2[0].length != 0) {
                     req.session.loggedIn = true;
                     req.session.username = username;
+                    req.session.save();
                     res.sendStatus(200);
                 }
                 else {
@@ -80,6 +86,15 @@ createAccount = function(req,res){
 
 login = function(req,res){
     attemptLogin(req.body.username,req.body.pass,req,res);
+}
+
+exports.isLoggedIn = function(req,res,next){
+    if(req.session.loggedIn){
+        return next();
+    }
+
+    res.sendStatus(404);
+
 }
 
 exports.init = function(app){
