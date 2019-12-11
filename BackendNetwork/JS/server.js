@@ -9,6 +9,11 @@ const express = require('express');
 
 const app = express();
 
+app.use(session({
+    'secret': 'Yo',
+     resave : false,
+     saveUninitialized : true
+  }));
 
 const config = {
     name : 'Yo Api',
