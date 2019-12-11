@@ -27,9 +27,11 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(20) DEFAULT NULL,
+  `hash` varchar(128) DEFAULT NULL,
+  `salt` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +40,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (27,'SShoemaker','d556795e291edb9303a021b39891ae96c8a2e32f0b8ab8be31eb1f56b351c529e508a4816ced1877a23a5ae98da38e7fa01dd36aa0211473f9a74a50d746451e','584860b19cb8f670ee6f90a0436cc09e'),(28,'StephenShoemaker','4e61780583dd08779096023437f17192924c182c96407d5defcd3086168d997f0af73f5393762650a91a74abe2fabdd326637d9a48741b5a038e899d38cd52e3','04992809f0437810d3dfcc0ca60dfc8e'),(29,'thePlant','5b15370914866b80c22d27da6f9e184eab1d47007403db48071b2eb6ba4a0320bb138109acad1bbcdc3491bd5746e95936ed6dda95325db15a347bff1a7f88a7','f6b9c912effdabad113bc4b1c04e92ef'),(30,'theSol','b43d46b8d0dfc0efe0d6b840640dcb23a1586d95428f64f12c5777930e4e43ee28942d6552f6ce32951cc3a71d991c65d5cbf196086777adaa2eca01a5e64c61','ee122287863a9d0e91f5ded37fa4c227');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,7 +58,7 @@ CREATE TABLE `yoList` (
   PRIMARY KEY (`id`),
   KEY `userId_idx` (`ownerId`),
   CONSTRAINT `userId` FOREIGN KEY (`ownerId`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,6 +67,7 @@ CREATE TABLE `yoList` (
 
 LOCK TABLES `yoList` WRITE;
 /*!40000 ALTER TABLE `yoList` DISABLE KEYS */;
+INSERT INTO `yoList` VALUES (17,27,'Barley'),(18,27,'Big Barley');
 /*!40000 ALTER TABLE `yoList` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,6 +94,7 @@ CREATE TABLE `yoRecipients` (
 
 LOCK TABLES `yoRecipients` WRITE;
 /*!40000 ALTER TABLE `yoRecipients` DISABLE KEYS */;
+INSERT INTO `yoRecipients` VALUES (17,27),(18,27),(17,28),(18,29),(18,30);
 /*!40000 ALTER TABLE `yoRecipients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,4 +135,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-08 23:53:16
+-- Dump completed on 2019-12-11 17:10:05
