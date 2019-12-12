@@ -43,5 +43,5 @@ app.get('/', function(req,res){
 account.init(app);
 yoRoutes.init(app);
 
-
+console.log("YO express API running");
  
