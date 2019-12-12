@@ -28,9 +28,13 @@ createYoList = function(req,res){
         }
         
     });
-    
-    
+}
 
+getYoLists = function(req,res){
+
+    mysql.query(`SELECT listName FROM yoList JOIN yoRecipients ON yoList.id = yoRecipients.listId WHERE yoRecipients.recipientId = ${req.session.userId};`,function(err,rows,fields){
+        res.send(rows);
+    })
 }
 
 generateYo = function(req,res){
@@ -62,5 +66,6 @@ exports.init = function(app){
 
     app.post('/createYoList', accounts.isLoggedIn, accounts.addId, createYoList);
     app.post('/generateYo', accounts.isLoggedIn,accounts.addId, generateYo);
+    app.get('/getYoLists', accounts.isLoggedIn,accounts.addId, getYoLists);
 
 }
