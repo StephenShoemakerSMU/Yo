@@ -97,12 +97,24 @@ exports.isLoggedIn = function(req,res,next){
 
 }
 
+block = function(req,res){
+    mysql.query(`INSERT INTO blockedUsers(blocker,blocked) VALUES('${req.session.userId}', ${req.body.blockedId})`,function(err,rows,fields){
+        if(err){
+            console.log(err.message);
+            res.send(404);
+        } else {
+            res.send(200);
+        }
+    })
+}
+
 exports.init = function(app){
     mysql = require('./yosql.js');
     app.get('/account/getUsername/:id', getUsername);
     app.post('/account/createAccount', createAccount);
     app.get('/account/login', login);
     app.get('/generatePassword/:password', setPassword);
+    app.post('/block', this.isLoggedIn,this.addId,block)
 }
 
 

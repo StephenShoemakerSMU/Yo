@@ -37,7 +37,7 @@ getYoLists = function(req,res){
     })
 }
 
-generateYo = function(req,res){
+generateYo = function(req,res,next){
     senderId = req.session.userId;
     yoList = req.body.yoList;
 
@@ -49,33 +49,62 @@ generateYo = function(req,res){
     
             res.sendStatus(404);
         } else {
-        mysql.query(`SELECT id FROM users JOIN yoRecipients ON yoRecipients.recipientId = users.id WHERE users.id != ${senderId};`, function(err2,rows2,fields2){
-            for(index = 0; index < rows2.length;index++){
-                recipientIds.push(rows2[index].id);
+        mysql.query(`SELECT yoRecipients.recipientId FROM users JOIN yoRecipients ON yoRecipients.recipientId = users.id WHERE users.id != ${senderId};`, function(err2,rows2,fields2){
+            if(err2){
+                console.log(err2.message)
+            } else {
+            req.session.currentYoIds = rows2;
+            req.session.save();
             }
-            res.sendStatus(200);
-        })}
-        
-        if(req.body.type = "pic"){
-            mysql.query(`INSERT INTO pictureYos(yo,link) VALUES ('${rows.insertId}','${req.body.link}');`,function(err2,rows2,fields2){
-                if(err2){
-                    console.log(err2.message);
-                };
-            });
+            if(req.body.type = "pic"){
+                mysql.query(`INSERT INTO pictureYos(yo,link) VALUES ('${rows.insertId}','${req.body.link}');`,function(err2,rows2,fields2){
+                    if(err2){
+                        console.log(err2.message);
+                    };
+                    mysql.query(`UPDATE yoList SET lastYo = NOW() WHERE yoList.id = '${yoList}'`,function(err,rows,fields){
+                        if(err)console.log(err.message);
+                        return next();
+                    });
+                });
+            }
+        })
         }
+        
+        
     });
 
-    mysql.query(`UPDATE yoList SET lastYo = NOW() WHERE yoList.id = '${yoList}'`,function(err,rows,fields){
-        if(err)console.log(err.message);
-    });
+    
+
+    
 
 }
 
+checkBlock = function(req,res){
+   
+    mysql.query(`SELECT blocker as recipientId FROM blockedUsers WHERE blocked = ${req.session.userId}`,function(err,rows,fields){
+        
+        for(index = 0; index <rows.length; index++){
+            for(yoIndex = 0; yoIndex < req.session.currentYoIds.length; yoIndex++){
+               
+                if(req.session.currentYoIds[yoIndex].recipientId == rows[index].recipientId){
+                    req.session.currentYoIds.splice(yoIndex,1);
+                    req.session.save();
+                    yoIndex --;
+                }
+            }
+        }
+        
+        console.log(req.session.currentYoIds);
+
+        res.send(200);
+    });
+    
+}
 
 exports.init = function(app){
 
     app.post('/createYoList', accounts.isLoggedIn, accounts.addId, createYoList);
-    app.post('/generateYo', accounts.isLoggedIn,accounts.addId, generateYo);
+    app.post('/generateYo', accounts.isLoggedIn,accounts.addId, generateYo, checkBlock);
     app.get('/getYoLists', accounts.isLoggedIn,accounts.addId, getYoLists);
 
 }
