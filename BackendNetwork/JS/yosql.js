@@ -1,3 +1,11 @@
+/*
+yosql.js
+
+Wrapper for mysql node package to make queries simpler
+uses a pool to make functions easier
+
+*/
+
 const mysql = require('mysql');
 
 const connection = mysql.createPool({
