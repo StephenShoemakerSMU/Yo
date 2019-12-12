@@ -1,3 +1,10 @@
+/*
+server.js
+Server config file for Yo API
+yo uses an express API to connect with a mysql database
+*/
+
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
