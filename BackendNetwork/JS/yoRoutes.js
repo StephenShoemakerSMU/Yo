@@ -49,12 +49,20 @@ generateYo = function(req,res){
     
             res.sendStatus(404);
         } else {
-        mysql.query(`SELECT id FROM users JOIN yoRecipients ON yoRecipients.recipientId = users.id WHERE users.id != ${senderId};`, function(err,rows,fields){
-            for(index = 0; index < rows.length;index++){
-                recipientIds.push(rows[index].id);
+        mysql.query(`SELECT id FROM users JOIN yoRecipients ON yoRecipients.recipientId = users.id WHERE users.id != ${senderId};`, function(err2,rows2,fields2){
+            for(index = 0; index < rows2.length;index++){
+                recipientIds.push(rows2[index].id);
             }
             res.sendStatus(200);
         })}
+        
+        if(req.body.type = "pic"){
+            mysql.query(`INSERT INTO pictureYos(yo,link) VALUES ('${rows.insertId}','${req.body.link}');`,function(err2,rows2,fields2){
+                if(err2){
+                    console.log(err2.message);
+                };
+            });
+        }
     });
 
     mysql.query(`UPDATE yoList SET lastYo = NOW() WHERE yoList.id = '${yoList}'`,function(err,rows,fields){
