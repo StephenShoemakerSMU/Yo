@@ -32,7 +32,7 @@ createYoList = function(req,res){
 
 getYoLists = function(req,res){
 
-    mysql.query(`SELECT listName FROM yoList JOIN yoRecipients ON yoList.id = yoRecipients.listId WHERE yoRecipients.recipientId = ${req.session.userId};`,function(err,rows,fields){
+    mysql.query(`SELECT listName, lastYo FROM yoList JOIN yoRecipients ON yoList.id = yoRecipients.listId WHERE yoRecipients.recipientId = ${req.session.userId} ORDER BY yoList.lastYo DESC;`,function(err,rows,fields){
         res.send(rows);
     })
 }
@@ -57,7 +57,9 @@ generateYo = function(req,res){
         })}
     });
 
-    
+    mysql.query(`UPDATE yoList SET lastYo = NOW() WHERE yoList.id = '${yoList}'`,function(err,rows,fields){
+        if(err)console.log(err.message);
+    });
 
 }
 
