@@ -16,6 +16,8 @@ services:
     ports:
       - 3306:3306
     # persistant volume
+    expose:
+      - "3306"
     volumes:
       - db_vol:/var/lib/mysql
     # shared network
@@ -33,6 +35,8 @@ services:
       - backend-db
     ports:
       - 8000:8000
+    expose:
+      - "8000"
     networks:
       - backend
       - frontend
